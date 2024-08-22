@@ -12,6 +12,7 @@ import matplotlib as plt
 import random
 import os
 
+from matplotlib.animation import FuncAnimation
 from matplotlib import patches, animation
 from matplotlib.image import BboxImage
 from matplotlib.transforms import Bbox, TransformedBbox
@@ -143,10 +144,10 @@ class Encounter:
 
     def __init__(self, *, last_a=0, v_own=50.0, v_int=0.0, theta=0.0, psi=0.0, rho=499., tau=0.0):
         #input values
-        self.last_a = last_a #ça fait quoi ça ?  
-        self.v_own = v_own   
-        self.v_int = v_int
-        self.theta = theta
+        self.last_a = last_a #last action taken by the airplane  
+        self.v_own = v_own #own speed  
+        self.v_int = v_int #intruder speed
+        self.theta = theta #angle of
         self.psi = psi
         self.rho = rho
         self.tau = tau
@@ -167,8 +168,8 @@ class AcasEnv(gym.Env):
                  save_states=False,
                  render_mode=None,
                  airplanes = [Airplane(name='own'), Airplane(x=10000.0, y=5000.0, head=-3.0, name='intruder')],
-                 epsilon = 0.01,
-                 max_time_steps=500, step=0):
+                 epsilon = 153.0, #distance NMAC (Near MidAir Collision) 500 feet
+                 max_time_steps=500):
 
         self.epsilon = epsilon
         self.airplanes = airplanes
@@ -180,7 +181,6 @@ class AcasEnv(gym.Env):
         self.rho = np.sqrt((self.own.x-self.int.x)**2 +(self.own.y-self.int.y)**2)
         self.min_dist = 0
         self.max_time_steps = max_time_steps
-        
 
         #Initial values
         self.first_step = True
@@ -194,7 +194,7 @@ class AcasEnv(gym.Env):
         self.observation_space = spaces.Box(
             low = -np.inf,
             high = np.inf,
-            shape=(6,), # la taille du vecteur qu'on observe, own_x, own_y, head_own, int_x,int_y, head_int
+            shape=(6,), # la taille du vecteur qu'on observe, own_x, own_y, head_own, int_x, int_y, head_int, speed_int
             dtype=np.float32
         )
         
@@ -267,8 +267,8 @@ class AcasEnv(gym.Env):
         between the two airplanes. 
         """
       
-        for i, own in enumerate(self.airplanes):
-            own.head = rad_mod(own.head + self.act_to_angle[action[i]])
+        for own in self.airplanes:
+            own.head = rad_mod(own.head + self.act_to_angle[action])
             own.x += np.cos(own.head) * own.speed
             own.y += np.sin(own.head) * own.speed
 
@@ -293,7 +293,6 @@ class AcasEnv(gym.Env):
         terminated = self.rho < self.epsilon
         truncated =  self.current_time_step == self.max_time_steps #TODO time_steps == max  
 
-        reward = -1 if terminated else 0
         obs = self._get_obs()
         info = self._get_info()
 
