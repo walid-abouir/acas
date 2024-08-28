@@ -8,3 +8,14 @@ ownship based on the relative position, speed, and heading of the intruder.
 The environment is compatible with OpenAI Gym and can be used for reinforcement 
 learning tasks. It includes methods for resetting the environment, taking a 
 step in the environment, rendering the current state, and closing the environment.
+
+### Installation via source code from Git repository
+
+If you want to make specific changes to the source code or extend it with your
+own functionalities this method will suit you.
+
+```
+git clone http://gitlab-dtis.onera/wabouir/acas-v2.git
+cd acas-v2
+pip install -e .
+```
