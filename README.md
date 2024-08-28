@@ -1,6 +1,6 @@
 # Acas-XU
 
-The AcasEnv class is a custom environment designed to simulate a scenario where
+This environment is a custom environment designed to simulate a scenario where
 two airplanes (ownship and intruder) are flying in a 2D plane. The goal is to 
 avoid the collision between the airplanes by adjusting the heading of the 
 ownship based on the relative position, speed, and heading of the intruder.
