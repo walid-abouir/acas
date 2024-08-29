@@ -22,4 +22,8 @@ pip install -e .
 
 ### Environneent prerequisites
 
-Environment to run needs Python3 with Gym, Pygame, Pymunk, and StableBaselines3 libraries.
+Environment to run needs Python3 with Gym, Pygame, Numpy, and StableBaselines3 libraries.
+
+```
+pip install stable-baselines3 numpy gymnasium gym pygame
+```
