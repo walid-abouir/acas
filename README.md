@@ -19,3 +19,7 @@ git clone http://gitlab-dtis.onera/wabouir/acas-v2.git
 cd acas-v2
 pip install -e .
 ```
+
+### Environneent prerequisites
+
+Environment to run needs Python3 with Gym, Pygame, Pymunk, and StableBaselines3 libraries.
