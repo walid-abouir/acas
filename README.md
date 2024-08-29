@@ -9,6 +9,10 @@ The environment is compatible with OpenAI Gym and can be used for reinforcement
 learning tasks. It includes methods for resetting the environment, taking a 
 step in the environment, rendering the current state, and closing the environment.
 
+<p align="center">
+  <img src="media/2aiplanes.png"/>
+</p>
+
 ## Installation and prerequisites
 
 ### Installation via source code from Git repository
