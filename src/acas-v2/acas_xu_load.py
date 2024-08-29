@@ -20,11 +20,11 @@ import gymnasium as gym
 env = AcasEnv(render_mode='human')
 
 
-models_dir= "models/PPO-1724842675"
+#models_dir= "models/PPO-1724842675"
 
-model_path = f"{models_dir}/100000.zip"
+#model_path = f"{models_dir}/100000.zip"
 
-model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/models/PPO-1724842675/32000000", env)
+model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/models/PPO-1724938297/2000", env)
 
 mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=1)
 vec_env = model.get_env()

@@ -25,6 +25,12 @@ from matplotlib.transforms import Affine2D
 LENGTH =1200
 WIDTH = 800
 
+ACT_COC = 0
+ACT_WL = 1
+ACT_WR = 2
+ACT_SL = 3
+ACT_SR = 4
+
 class AcasEnv(gym.Env):
 
     """
@@ -154,17 +160,27 @@ class AcasEnv(gym.Env):
     
     def smart_random_init(self, total_time=200):
         airplanes = []
-        interest_time = random.randrange(80, total_time - 40)
+        
+        #interest_time = random.randrange(80, total_time - 40)
+        interest_time = 100
 
-        head = np.random.uniform(-np.pi, np.pi)
-        speed = np.random.uniform(50, 100)
+        #head = np.random.uniform(-np.pi, np.pi)
+        head = 1.0
+        
+        #speed = np.random.uniform(50, 100)
+        speed = 75
+        
         x_t, y_t = 0, 0
         x_0 = x_t - (speed * interest_time * np.cos(head))
         y_0 = y_t - (speed * interest_time * np.sin(head))
         airplanes.append(Airplane(x=x_0, y=y_0, head=head, speed=speed, name="own"))
 
-        head = np.random.uniform(-np.pi, np.pi)
-        speed = np.random.uniform(100, 300)
+        #head = np.random.uniform(-np.pi, np.pi)
+        head = 2.0
+        
+        #speed = np.random.uniform(100, 300)
+        speed = 200
+        
         x_t, y_t = 0, 0
         x_0 = x_t - (speed * interest_time * np.cos(head))
         y_0 = y_t - (speed * interest_time * np.sin(head))
@@ -212,22 +228,27 @@ class AcasEnv(gym.Env):
         
         reward = 0
             
-        if action == 0:
-            reward += 0.0001
+        if action == ACT_COC:
+            #reward += 0.0001
+            reward += 0.0005
 
-        elif ((self.last_a == 1 and action == 3) or (self.last_a == 2 and action == 4)):
+        #strengthening action
+        elif ((self.last_a == ACT_WL and action == ACT_SL) or (self.last_a == ACT_WR and action == ACT_SR)):
             reward -= 0.009
         
-        elif ((self.last_a == 1 or self.last_a == 3) and (action == 2 or action == 4)):
+        #reversal 
+        elif ((self.last_a == ACT_WL or self.last_a == ACT_SL) and (action == ACT_WR or action == ACT_SR)):
             reward -= 0.01
         
-        elif ((self.last_a == 2 or self.last_a == 4) and (action == 3 or action == 1)):
+        #reversal 
+        elif ((self.last_a == ACT_WR or self.last_a == ACT_SR) and (action == ACT_WL or action == ACT_SL)):
             reward -= 0.01
 
+        #crash 
         if self.rho[-1] < self.epsilon:
             reward = -1
 
-        print(reward)
+        #print(reward)
 
         terminated = (self.rho[-1] < self.epsilon)
         truncated = (self.current_time_step == self.max_time_steps)
@@ -280,7 +301,7 @@ class AcasEnv(gym.Env):
         self.screen.blit(rotated_img_own, rect_own.topleft)
         self.screen.blit(rotated_img_int, rect_int.topleft)
         self.draw_time()
-        self.draw_dashed_line(self.screen, (0, 0, 0), intruder_pos, (LENGTH/2,WIDTH/2), dash_length=15, width=2)
+        #self.draw_dashed_line(self.screen, (0, 0, 0), intruder_pos, (LENGTH/2,WIDTH/2), dash_length=15, width=2)
 
         
         #pygame.draw.circle(self.screen, (0, 0, 255), own_pos, 10)
@@ -337,32 +358,36 @@ class Airplane():
     def __str__(self):
         return f"x: {self.x}, y: {self.y}, head: {self.head}, speed: {self.speed}"
 
-"""
 
-# Créer une instance de l'environnement
-env = AcasEnv(render_mode="human")
 
-# Réinitialiser l'environnement
-obs, info = env.reset()
 
-# Définir le nombre maximal d'étapes
-num_steps = 200
 
-# Boucle sur chaque étape du jeu
-for step in range(num_steps):
-    # Prendre l'action 0 (aller tout droit)
-    action = 1
-    obs, reward, terminated, truncated, info = env.step(action)
+if __name__ == "__main__":
 
-    # Rendre l'environnement pour visualiser
-    env.render()
+    # Créer une instance de l'environnement
+    env = AcasEnv(render_mode="human")
+    
+    # Réinitialiser l'environnement
+    obs, info = env.reset()
+    
+    # Définir le nombre maximal d'étapes
+    num_steps = 200
+    
+    # Boucle sur chaque étape du jeu
+    for step in range(num_steps):
+        # Prendre l'action 0 (aller tout droit)
+        action = 1
+        obs, reward, terminated, truncated, info = env.step(action)
+    
+        # Rendre l'environnement pour visualiser
+        env.render()
+    
+        # Vérifier si l'épisode est terminé ou tronqué
+        if terminated or truncated:
+            print(f"Episode terminé à l'étape {step + 1}")
+            break
+    
+    # Fermer l'environnement pour libérer les ressources
+    env.close()
 
-    # Vérifier si l'épisode est terminé ou tronqué
-    if terminated or truncated:
-        print(f"Episode terminé à l'étape {step + 1}")
-        break
 
-# Fermer l'environnement pour libérer les ressources
-env.close()
-
-"""
