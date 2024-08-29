@@ -29,3 +29,11 @@ Environment to run needs Python3 with Gym, Pygame, Numpy, and StableBaselines3 l
 ```
 pip install stable-baselines3 numpy gymnasium gym pygame
 ```
+
+# Environment details
+
+### Agent action and observation space
+
+### Initial episode conditions
+
+### Ending episode conditions
