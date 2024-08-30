@@ -230,25 +230,28 @@ class AcasEnv(gym.Env):
             
         if action == ACT_COC:
             #reward += 0.0001
-            reward += 0.0005
+            # reward += 0.0005
+            reward += 1
 
         #strengthening action
         elif ((self.last_a == ACT_WL and action == ACT_SL) or (self.last_a == ACT_WR and action == ACT_SR)):
-            reward -= 0.009
+            # reward -= 0.009
+            reward -= 0.5
         
         #reversal 
         elif ((self.last_a == ACT_WL or self.last_a == ACT_SL) and (action == ACT_WR or action == ACT_SR)):
-            reward -= 0.01
+            reward -= 1
         
         #reversal 
         elif ((self.last_a == ACT_WR or self.last_a == ACT_SR) and (action == ACT_WL or action == ACT_SL)):
-            reward -= 0.01
+            reward -= 1
 
         #crash 
         if self.rho[-1] < self.epsilon:
-            reward = -1
+            reward = -100
 
         #print(reward)
+        #print(action)
 
         terminated = (self.rho[-1] < self.epsilon)
         truncated = (self.current_time_step == self.max_time_steps)
