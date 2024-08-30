@@ -34,7 +34,8 @@ if __name__ == "__main__":
     num_envs = 4
     env = SubprocVecEnv([make_env for _ in range(num_envs)])
 
-    term, trunc = False, False
+    
+
     env.reset()
 
     model=PPO('MlpPolicy', env, verbose=1, tensorboard_log=logdir)
@@ -42,3 +43,15 @@ if __name__ == "__main__":
     for i in range(1,100):
         model.learn(total_timesteps=TIMESTEPS, reset_num_timesteps=False, tb_log_name="PPO")
         model.save(f"{models_dir}/{TIMESTEPS*i}")
+
+        obs=env.reset()
+        total_rewards = [0]*num_envs
+        term = [False] * num_envs
+        trunc = [False] * num_envs
+
+        while not all(trunc) and not all(trunc):
+            action, _states = model.predict(obs)
+            obs, rewards, terminated, truncated, info = env.step(action)
+            total_rewards = [total_rewards[j] + rewards[j] for j in range(num_envs)]
+    
+        print(f"Total rewards after {TIMESTEPS*i} timesteps: {sum(total_rewards)/num_envs}")
