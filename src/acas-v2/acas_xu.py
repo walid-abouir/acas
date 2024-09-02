@@ -31,6 +31,12 @@ ACT_WR = 2
 ACT_SL = 3
 ACT_SR = 4
 
+register(
+    id='acas-v2',
+    entry_point='acas_xu:AcasEnv'
+)
+
+
 class AcasEnv(gym.Env):
 
     """

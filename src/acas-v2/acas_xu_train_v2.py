@@ -1,48 +1,83 @@
-import stable_baselines3 as sb3
-from stable_baselines3 import PPO
-from stable_baselines3.common.vec_env import SubprocVecEnv
+import argparse
 import time
 import os
+import random
+import socket
+
+import torch
+import numpy as np
+from stable_baselines3 import PPO, SAC, A2C, TD3, DDPG, DQN
+from stable_baselines3.common.env_util import make_vec_env
+from stable_baselines3.common.callbacks import CheckpointCallback
 import gymnasium as gym
+#import PyFlyt.gym_envs
+#from PyFlyt.gym_envs import FlattenWaypointEnv
+
 from acas_xu import AcasEnv
-from logger import RewardLoggerCallback  # Assurez-vous d'importer le bon module
+from logger import callback_custom_metric_sb3
 
 
-if __name__ == "__main__":
-    # Définir le répertoire pour les modèles et les logs
-    models_dir = f"/d/wabouir/acas-v2/src/acas-v2/models/PPO-{int(time.time())}"
-    logdir = f"/d/wabouir/acas-v2/src/acas-v2/logs/PPO-{int(time.time())}"
+root_path_logs = "/stck/wabouir/acas-xu/logs/" if "spiro" in socket.gethostname() else "/d/wabouir/acas-v2/src/acas-v2/logs/"
 
-    if not os.path.exists(models_dir):
-        os.makedirs(models_dir)
+# Argument parser
+parser = argparse.ArgumentParser(description='RL algorithm parameters')
+parser.add_argument('--algorithm', type=str, choices=['PPO', 'SAC', 'A2C', 'TD3', 'DDPG', 'DQN'], default='PPO', help='RL algorithm to use')
+parser.add_argument('--gym_id', type=str, default="acas-v2", help='Environment ID')
+parser.add_argument("--num_envs", type=int, default=1, help="Number of environments to use in parallel")
+parser.add_argument('--verbose', type=int, default=0, help='Verbose level')
+parser.add_argument('--seed', type=int, default=None, help='Random seed')
+parser.add_argument('--total_timesteps', type=int, default=2_000_000, help='Total timesteps')
+parser.add_argument('--log_metrics', type=str, nargs='+', help='The names of the custom metrics to be logged in Tensorboard (they have to be in infos)')
+parser.add_argument('--reward_crash', type=int, help='The reward given when the plane crashes')
 
-    if not os.path.exists(logdir):
-        os.makedirs(logdir)
 
-    # Créer les environnements
-    num_envs = 4
-    env = SubprocVecEnv([lambda: AcasEnv() for _ in range(num_envs)])
+args = parser.parse_args()
 
-    # Créer le modèle PPO
-    model = PPO('MlpPolicy', env, verbose=1, tensorboard_log=logdir)
+if args.seed is None:
+    args.seed = random.randint(1, 1000000)
 
-    # Créer le callback
-    callback = RewardLoggerCallback()
+# Ensure repoducibility
+random.seed(args.seed)
+np.random.seed(args.seed)
+torch.manual_seed(args.seed)
 
-    # Entraîner le modèle
-    TIMESTEPS = 1000000
-    for i in range(1, 100):
-        model.learn(total_timesteps=TIMESTEPS, reset_num_timesteps=False, tb_log_name="PPO", callback=callback)
-        model.save(f"{models_dir}/{TIMESTEPS*i}")
 
-        obs = env.reset()
-        total_rewards = [0] * num_envs
-        done = [False] * num_envs
 
-        while not all(done):
-            action, _states = model.predict(obs)
-            obs, rewards, terminated, truncated, info = env.step(action)
-            total_rewards = [total_rewards[j] + rewards[j] for j in range(num_envs)]
-            done = [d or t for d, t in zip(terminated, truncated)]
+# Environment
+# env = make_vec_env(make_env, n_envs=args.num_envs, seed=args.seed)
+#env = gym.make(args.gym_id)
+env = AcasEnv()
 
-        print(f"Total rewards after {TIMESTEPS*i} timesteps: {sum(total_rewards)/num_envs}")
+algo = {'PPO': PPO, 'SAC': SAC, 'A2C': A2C, 'TD3': TD3, 'DDPG': DDPG, 'DQN': DQN}[args.algorithm]
+
+checkpoint_callback = CheckpointCallback(
+  save_freq=1000,
+  save_path="./logs/PPO_1",
+  name_prefix="rl_model",
+  save_replay_buffer=True,
+  save_vecnormalize=True,
+)
+
+# Select and initialize the RL algorithm
+model = algo(
+    policy='MlpPolicy',
+    env=env,
+    tensorboard_log=root_path_logs ,
+    seed=args.seed,
+    verbose=args.verbose,
+)
+
+def generate_run_name(args):
+    run_name_parts = [args.algorithm, str(args.reward_crash), "SB3"]
+    run_name_parts.append(f"{int(time.time())}")
+    return "_".join(run_name_parts)
+
+# Learning
+run_name = generate_run_name(args)
+if args.log_metrics is not None:
+    callback = callback_custom_metric_sb3(args.log_metrics)
+    model.learn(total_timesteps=args.total_timesteps, progress_bar=False, tb_log_name=run_name, callback=checkpoint_callback)
+else:
+    model.learn(total_timesteps=args.total_timesteps, progress_bar=False, tb_log_name=run_name, callback = checkpoint_callback)
+print(os.path.join(root_path_logs, run_name + "_1","agent"))
+model.save(os.path.join(root_path_logs, run_name + "_1","agent"))

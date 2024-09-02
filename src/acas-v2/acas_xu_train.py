@@ -7,7 +7,7 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import SubprocVecEnv
 from stable_baselines3 import SAC
 from stable_baselines3 import DQN
-
+from stable_baselines3.common.callbacks import CheckpointCallback
 import time
 import sys
 import os
@@ -31,27 +31,24 @@ if __name__ == "__main__":
 
 
 
-    num_envs = 4
-    env = SubprocVecEnv([make_env for _ in range(num_envs)])
+    #num_envs = 4
+    #env = SubprocVecEnv([make_env for _ in range(num_envs)])
 
-    
+    checkpoint_callback = CheckpointCallback(
+        save_freq=10000,
+        save_path=logdir,
+        name_prefix="fixed_agent_model",
+        save_replay_buffer=True,
+        save_vecnormalize=True,
+        )
 
+
+    env = AcasEnv()
+    term, trunc = False, False
     env.reset()
 
     model=PPO('MlpPolicy', env, verbose=1, tensorboard_log=logdir)
     TIMESTEPS= 1000000
-    for i in range(1,100):
-        model.learn(total_timesteps=TIMESTEPS, reset_num_timesteps=False, tb_log_name="PPO")
-        model.save(f"{models_dir}/{TIMESTEPS*i}")
-
-        obs=env.reset()
-        total_rewards = [0]*num_envs
-        term = [False] * num_envs
-        trunc = [False] * num_envs
-
-        while not all(trunc) and not all(trunc):
-            action, _states = model.predict(obs)
-            obs, rewards, terminated, truncated, info = env.step(action)
-            total_rewards = [total_rewards[j] + rewards[j] for j in range(num_envs)]
     
-        print(f"Total rewards after {TIMESTEPS*i} timesteps: {sum(total_rewards)/num_envs}")
+    model.learn(total_timesteps=TIMESTEPS, reset_num_timesteps=False, tb_log_name="PPO", callback=checkpoint_callback)
+    model.save(f"{models_dir}/{TIMESTEPS}")
