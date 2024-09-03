@@ -167,7 +167,7 @@ class AcasEnvContinuous(gym.Env):
         intruder_speed = np.clip(intruder.speed, 0, 300)
         theta = np.clip(self.theta[0], -np.pi, np.pi).item()
         psi = np.clip(self.psi[0], -np.pi, np.pi).item()
-        last_a = np.clip(self.last_a, -180, 180).item()
+        last_a = np.clip(self.last_a, np.radians(-3.), np.radians(3.)).item()
 
         obs = np.array([rho, own_speed, intruder_speed, theta, psi, last_a], dtype=np.float32)
         return obs
@@ -408,7 +408,7 @@ if __name__ == "__main__":
     # Boucle sur chaque étape du jeu
     for step in range(num_steps):
         # Prendre l'action 0 (aller tout droit)
-        action = np.degrees(0.0003)
+        action = 3
         obs, reward, terminated, truncated, info = env.step(action)
     
         # Rendre l'environnement pour visualiser

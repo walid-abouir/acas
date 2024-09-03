@@ -20,8 +20,8 @@ def make_env():
 
 if __name__ == "__main__":
 
-    models_dir= f"models/PPO-{int(time.time())}"
-    logdir= f"logs/PPO-{int(time.time())}"
+    models_dir= f"models/SAC-{int(time.time())}"
+    logdir= f"logs/SAC-{int(time.time())}"
 
     if not os.path.exists(models_dir):
         os.makedirs(models_dir)
