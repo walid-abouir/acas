@@ -129,6 +129,7 @@ class AcasEnv(gym.Env):
         self.relative_distances = np.array([[np.hypot(own.x-intruder.x, own.y-intruder.y) for intruder in self.airplanes] for own in self.airplanes])
         for i in range(len(self.airplanes)):
             self.relative_distances[i,i] = np.inf
+        #print(self.relative_distances)
         self.nearest_intruder_index = self.relative_distances.argmin(axis=-1)
         self.relative_angles = np.array([[rad_mod(np.arctan2(intruder.y-own.y, intruder.x-own.x)) for intruder in self.airplanes] for own in self.airplanes])
         self.relative_heads = np.array([[rad_mod(intruder.head-own.head) for intruder in self.airplanes] for own in self.airplanes])

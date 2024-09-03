@@ -25,7 +25,7 @@ env = AcasEnv(render_mode='human')
 #model_path = f"{models_dir}/100000.zip"
 
 
-model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/models/PPO-1724942457/15000000", env)
+model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/logs/PPO_1/rl_model_90000_steps", env)
 
 mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=1)
 vec_env = model.get_env()

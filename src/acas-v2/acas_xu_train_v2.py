@@ -14,6 +14,7 @@ import gymnasium as gym
 #from PyFlyt.gym_envs import FlattenWaypointEnv
 
 from acas_xu import AcasEnv
+from acas_xu_continuous import AcasEnvContinuous
 from logger import callback_custom_metric_sb3
 
 
@@ -22,11 +23,11 @@ root_path_logs = "/stck/wabouir/acas-xu/logs/" if "spiro" in socket.gethostname(
 # Argument parser
 parser = argparse.ArgumentParser(description='RL algorithm parameters')
 parser.add_argument('--algorithm', type=str, choices=['PPO', 'SAC', 'A2C', 'TD3', 'DDPG', 'DQN'], default='PPO', help='RL algorithm to use')
-parser.add_argument('--gym_id', type=str, default="acas-v2", help='Environment ID')
+parser.add_argument('--gym_id', type=str, default="Acas-discrete-v1", help='Environment ID')
 parser.add_argument("--num_envs", type=int, default=1, help="Number of environments to use in parallel")
 parser.add_argument('--verbose', type=int, default=0, help='Verbose level')
 parser.add_argument('--seed', type=int, default=None, help='Random seed')
-parser.add_argument('--total_timesteps', type=int, default=2_000_000, help='Total timesteps')
+parser.add_argument('--total_timesteps', type=int, default=3_000_000, help='Total timesteps')
 parser.add_argument('--log_metrics', type=str, nargs='+', help='The names of the custom metrics to be logged in Tensorboard (they have to be in infos)')
 parser.add_argument('--reward_crash', type=int, help='The reward given when the plane crashes')
 
@@ -46,7 +47,9 @@ torch.manual_seed(args.seed)
 # Environment
 # env = make_vec_env(make_env, n_envs=args.num_envs, seed=args.seed)
 #env = gym.make(args.gym_id)
+#env = AcasEnvContinuous()
 env = AcasEnv()
+
 
 algo = {'PPO': PPO, 'SAC': SAC, 'A2C': A2C, 'TD3': TD3, 'DDPG': DDPG, 'DQN': DQN}[args.algorithm]
 
@@ -64,7 +67,7 @@ model = algo(
     env=env,
     tensorboard_log=root_path_logs ,
     seed=args.seed,
-    verbose=args.verbose,
+    verbose=args.verbose,gamma=1
 )
 
 def generate_run_name(args):

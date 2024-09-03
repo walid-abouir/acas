@@ -12,11 +12,11 @@ import time
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
-from acas_xu import AcasEnv
+from acas_xu_continuous import AcasEnvContinuous
 import gymnasium as gym
 
 def make_env():
-    return AcasEnv()
+    return AcasEnvContinuous()
 
 if __name__ == "__main__":
 
@@ -43,12 +43,12 @@ if __name__ == "__main__":
         )
 
 
-    env = AcasEnv()
+    env = AcasEnvContinuous()
     term, trunc = False, False
     env.reset()
 
-    model=PPO('MlpPolicy', env, verbose=1, tensorboard_log=logdir)
+    model=SAC('MlpPolicy', env, verbose=1, tensorboard_log=logdir)
     TIMESTEPS= 1000000
     
-    model.learn(total_timesteps=TIMESTEPS, reset_num_timesteps=False, tb_log_name="PPO", callback=checkpoint_callback)
+    model.learn(total_timesteps=TIMESTEPS, reset_num_timesteps=False, tb_log_name="SAC", callback=checkpoint_callback)
     model.save(f"{models_dir}/{TIMESTEPS}")

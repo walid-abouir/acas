@@ -31,7 +31,7 @@ ACT_WR = 2
 ACT_SL = 3
 ACT_SR = 4
 
-class AcasEnv(gym.Env):
+class AcasEnvContinuous(gym.Env):
 
     """
     ### Description:
@@ -45,12 +45,8 @@ class AcasEnv(gym.Env):
     the current state, and closing the environment.
 
     ### Action Space:
-    The action space is a discrete space with 5 possible actions:
-    - 0: Maintain current heading
-    - 1: Turn left (small angle)
-    - 2: Turn right (small angle)
-    - 3: Turn left (large angle)
-    - 4: Turn right (large angle)
+    The action space is a continuous space with a float between -3 and +3 degrees:
+
 
     ### Observation Space:
     The observation space is a continuous space represented by a 6-dimensional vector:
@@ -105,7 +101,7 @@ class AcasEnv(gym.Env):
         min_act_angle = np.radians(-3)
         max_act_angle = np.radians(+3)
         #self.action_space = spaces.Discrete(5)
-        self_action_space = spaces.Box(lox=min_act_angle, high= max_act_angle, dtype = np.float32)
+        self.action_space = spaces.Box(low=min_act_angle, high= max_act_angle, dtype = np.float32)
 
         self.observation_space = spaces.Box(
            low=np.array([-1e6, 0, 0, -np.pi, -np.pi, 0]),
@@ -119,32 +115,59 @@ class AcasEnv(gym.Env):
             self.airplanes = airplanes
         
         self.own = self.airplanes[0]
-        self.int = self.airplanes[1]
-        self.rho = np.sqrt((self.own.x - self.int.x) ** 2 + (self.own.y - self.int.y) ** 2)
+        self.intruder = self.airplanes[1]
+        self.rho = np.sqrt((self.own.x - self.intruder.x) ** 2 + (self.own.y - self.intruder.y) ** 2)
 
     def update_relations(self):
-        self.relative_distances = np.array([[np.hypot(own.x-intruder.x, own.y-intruder.y) for intruder in self.airplanes] for own in self.airplanes])
-        for i in range(len(self.airplanes)):
-            self.relative_distances[i,i] = np.inf
-        self.nearest_intruder_index = self.relative_distances.argmin(axis=-1)
-        self.relative_angles = np.array([[rad_mod(np.arctan2(intruder.y-own.y, intruder.x-own.x)) for intruder in self.airplanes] for own in self.airplanes])
-        self.relative_heads = np.array([[rad_mod(intruder.head-own.head) for intruder in self.airplanes] for own in self.airplanes])
-        self.rho = np.array([self.relative_distances[i, self.nearest_intruder_index[i]] for i in range(len(self.airplanes))])
-        self.theta = np.array([self.relative_angles[i, self.nearest_intruder_index[i]] for i in range(len(self.airplanes))])
-        self.psi = np.array([self.relative_heads[i, self.nearest_intruder_index[i]] for i in range(len(self.airplanes))])
-        self.v_int = np.array([self.airplanes[self.nearest_intruder_index[i]].speed for i in range(len(self.airplanes))])
-        self.min_dist = self.rho.min()
+        try:
+            #print(self.intruder.x, self.intruder.y)
+            num_airplanes = len(self.airplanes)
+            self.relative_distances = np.zeros((num_airplanes, num_airplanes))
+            self.relative_angles = np.zeros((num_airplanes, num_airplanes))  
+            self.relative_heads = np.zeros((num_airplanes, num_airplanes)) 
+            #self.relative_distances = np.array([[np.hypot(own.x-intruder.x, own.y-intruder.y) for intruder in self.airplanes] for own in self.airplanes])
+            for i, own in enumerate(self.airplanes):
+                for j, intruder in enumerate(self.airplanes):
+                    if i != j:
+                        self.relative_distances[i, j] = np.hypot(own.x - intruder.x, own.y - intruder.y)
+                    else:
+                        self.relative_distances[i, j] = np.inf 
+            #print('Relative distance shape:', self.relative_distances.shape)
+            #print('Relative distance :', self.relative_distances)
+            self.nearest_intruder_index = self.relative_distances.argmin(axis=-1)
+            #self.relative_angles = np.array([[rad_mod(np.arctan2(intruder.y-own.y, intruder.x-own.x)) for intruder in self.airplanes] for own in self.airplanes])
+            for i, own in enumerate(self.airplanes):
+                for j, intruder in enumerate(self.airplanes):
+                    if i != j:
+                        self.relative_angles[i, j] = rad_mod(np.arctan2(intruder.y-own.y, intruder.x-own.x))
+                    else:
+                        self.relative_distances[i, j] = 0
+            #self.relative_heads = np.array([[rad_mod(intruder.head-own.head) for intruder in self.airplanes] for own in self.airplanes])
+            for i, own in enumerate(self.airplanes):
+                for j, intruder in enumerate(self.airplanes):
+                    if i != j:
+                        self.relative_heads[i, j] = rad_mod(intruder.head-own.head)
+                    else:
+                        self.relative_heads[i, j] = 0
+            self.rho = np.array([self.relative_distances[i, self.nearest_intruder_index[i]] for i in range(len(self.airplanes))])
+            self.theta = np.array([self.relative_angles[i, self.nearest_intruder_index[i]] for i in range(len(self.airplanes))])
+            self.psi = np.array([self.relative_heads[i, self.nearest_intruder_index[i]] for i in range(len(self.airplanes))])
+            self.v_int = np.array([self.airplanes[self.nearest_intruder_index[i]].speed for i in range(len(self.airplanes))])
+            self.min_dist = self.rho.min()
+        except Exception as e:
+            print("Error during update_relations : ", str(e))
+            raise
 
     def _get_obs(self):
         own = self.airplanes[0]
         intruder = self.airplanes[1]
 
-        rho = np.clip(self.rho[0], -1e4, 1e4)
+        rho = np.clip(self.rho[0], -1e4, 1e4).item()
         own_speed = np.clip(own.speed, 0, 300)
         intruder_speed = np.clip(intruder.speed, 0, 300)
-        theta = np.clip(self.theta[0], -np.pi, np.pi)
-        psi = np.clip(self.psi[0], -np.pi, np.pi)
-        last_a = np.clip(self.last_a, 0, 4)
+        theta = np.clip(self.theta[0], -np.pi, np.pi).item()
+        psi = np.clip(self.psi[0], -np.pi, np.pi).item()
+        last_a = np.clip(self.last_a, -180, 180).item()
 
         obs = np.array([rho, own_speed, intruder_speed, theta, psi, last_a], dtype=np.float32)
         return obs
@@ -212,7 +235,9 @@ class AcasEnv(gym.Env):
         own = self.airplanes[0]
         intruder = self.airplanes[1]
 
-        own.head = rad_mod(own.head + self.act_to_angle[action])
+        action = np.clip(action, np.radians(-3), np.radians(3))
+
+        own.head = rad_mod(own.head + action)
         
         
         own.x += np.cos(own.head) * own.speed   
@@ -231,22 +256,23 @@ class AcasEnv(gym.Env):
         
         reward = 0
             
-        if action == ACT_COC:
+        if action == np.degrees(0):
             #reward += 0.0001
             # reward += 0.0005
             reward += 1
 
         #strengthening action
-        elif ((self.last_a == ACT_WL and action == ACT_SL) or (self.last_a == ACT_WR and action == ACT_SR)):
+        #elif ((self.last_a == ACT_WL and action == ACT_SL) or (self.last_a == ACT_WR and action == ACT_SR)):
+        elif ((np.degrees(-2)<self.last_a <np.degrees(0) and action<=np.degrees(-2)) or (np.degrees(0)<self.last_a<np.degrees(2) and action>=np.degrees(2))):
             # reward -= 0.009
             reward -= 0.5
         
         #reversal 
-        elif ((self.last_a == ACT_WL or self.last_a == ACT_SL) and (action == ACT_WR or action == ACT_SR)):
+        elif ((np.degrees(-2)<self.last_a<np.degrees(0) or self.last_a<=np.degrees(-2)) and (np.degrees(0)<action<np.degrees(2) or action>=np.degrees(2))):
             reward -= 1
         
         #reversal 
-        elif ((self.last_a == ACT_WR or self.last_a == ACT_SR) and (action == ACT_WL or action == ACT_SL)):
+        elif ((np.degrees(0)<self.last_a<np.degrees(2) or self.last_a>=np.degrees(2)) and (np.degrees(-2)<action<np.degrees(0) or action<=np.degrees(-2))):
             reward -= 1
 
         #crash 
@@ -371,7 +397,7 @@ class Airplane():
 if __name__ == "__main__":
 
     # Créer une instance de l'environnement
-    env = AcasEnv(render_mode="human")
+    env = AcasEnvContinuous(render_mode="human")
     
     # Réinitialiser l'environnement
     obs, info = env.reset()
@@ -382,7 +408,7 @@ if __name__ == "__main__":
     # Boucle sur chaque étape du jeu
     for step in range(num_steps):
         # Prendre l'action 0 (aller tout droit)
-        action = 1
+        action = np.degrees(0.0003)
         obs, reward, terminated, truncated, info = env.step(action)
     
         # Rendre l'environnement pour visualiser
