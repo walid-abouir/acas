@@ -26,7 +26,7 @@ cd acas-v2
 pip install -e .
 ```
 
-### Environneent prerequisites
+### Environment prerequisites
 
 Environment to run needs Python3 with Gym, Pygame, Numpy, and StableBaselines3 libraries.
 
@@ -34,7 +34,7 @@ Environment to run needs Python3 with Gym, Pygame, Numpy, and StableBaselines3 l
 pip install stable-baselines3 numpy gymnasium gym pygame
 ```
 
-# Environment details
+## Environment details
 
 ## Observation space
 
@@ -75,4 +75,32 @@ and value 3 degrees means turning strongly  to the right.
 
 ## Initial episode conditions
 
+At the start of each episode, initial positions and velocities for two airplanes
+are set up. It first defines a fixed time of interest, when the collision will 
+happen. It affects random values for the headings and the velocities.
+The position of the collision was taken experimentally so that it could be seen
+on the screen during the simulation.
+
 ## Ending episode conditions
+
+Each episode ends if the minimum distance between the two airplanes, rho, is less
+than a initially defined value, called epsilon. Additionally, each episode is 
+limited in duration by the maximum number of timesteps.
+
+## Reward Structure:
+
+- A positive reward is given for maintaining the current heading.
+- Small Penalties are applied for conflicting maneuvers (Strengthening or reversing
+from left to right).
+- A large negative reward is given if the distance to the intruder drops below a
+safety threshold (epsilon).
+
+## Environment parameters
+
+This environment provides several parameters that can change the way it works.
+- render_mode : (string) The mode of the render (human or rgb_array)
+- airplanes (class) : list of airplanes and their parameters : position (x , y), speed (float), head (float), name (string).
+- epsilon : (int) The safety threshold before collision.
+- max_time_steps : (int) The maximum time steps during an episode.
+- step_ini : (int) Initial step at the begining of the episode (Default = 0).
+
