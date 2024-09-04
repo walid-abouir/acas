@@ -36,8 +36,24 @@ pip install stable-baselines3 numpy gymnasium gym pygame
 
 # Environment details
 
-### Agent action and observation space
+## Observation space
 
-### Initial episode conditions
+The observation space consists of six values :
+- The first value represents the minimum distance between the two airplanes.
+We call it "rho". It goes from -1e4 and 1e4. The agents receives this value that 
+indicates if it's close to a collision with the intruder.
+- The second and third values of the observation are the ownship's and intruder's 
+speed. It goes from 0 and 300 m/sec.
+- The fourth value is theta, which is the relative angle between the two airplanes.
+Its value goes form - \pi and $\pi$
 
-### Ending episode conditions
+
+## Action space
+
+### Discrete version of the environment
+
+### Continuous version of the environment
+
+## Initial episode conditions
+
+## Ending episode conditions
