@@ -75,4 +75,9 @@ and value 3 degrees means turning strongly  to the right.
 
 ## Initial episode conditions
 
+At the start of each episode, initial positions and velocities for two airplanes
+are set up. It first defines a fixed time of interest, when the collision will 
+happen.
+
+
 ## Ending episode conditions
