@@ -10,7 +10,7 @@ learning tasks. It includes methods for resetting the environment, taking a
 step in the environment, rendering the current state, and closing the environment.
 
 <p align="center">
-  <img src=2airplanes.png/>
+  <img src=2airplanes.png width="50%"/>
 </p>
 
 ## Installation and prerequisites
