@@ -57,7 +57,14 @@ it's added to ownship's head, to modify it, and avoid the collision.
 
 ### Discrete version of the environment
 
+
+
 ### Continuous version of the environment
+
+The space of actions made available to the RL agent consists of one value from -3
+to 3 degrees. It is correlated to the angle added to the ownship's head to modify
+its head. The value -3 degrees means that the airplane turns strongly to the left,
+and value 3 degrees means turning strongly  to the right.
 
 ## Initial episode conditions
 
