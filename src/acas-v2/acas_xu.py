@@ -127,28 +127,55 @@ class AcasEnv(gym.Env):
 
     def update_relations(self):
         self.relative_distances = np.array([[np.hypot(own.x-intruder.x, own.y-intruder.y) for intruder in self.airplanes] for own in self.airplanes])
-        for i in range(len(self.airplanes)):
-            self.relative_distances[i,i] = np.inf
-        #print(self.relative_distances)
-        self.nearest_intruder_index = self.relative_distances.argmin(axis=-1)
-        self.relative_angles = np.array([[rad_mod(np.arctan2(intruder.y-own.y, intruder.x-own.x)) for intruder in self.airplanes] for own in self.airplanes])
-        self.relative_heads = np.array([[rad_mod(intruder.head-own.head) for intruder in self.airplanes] for own in self.airplanes])
-        self.rho = np.array([self.relative_distances[i, self.nearest_intruder_index[i]] for i in range(len(self.airplanes))])
-        self.theta = np.array([self.relative_angles[i, self.nearest_intruder_index[i]] for i in range(len(self.airplanes))])
-        self.psi = np.array([self.relative_heads[i, self.nearest_intruder_index[i]] for i in range(len(self.airplanes))])
-        self.v_int = np.array([self.airplanes[self.nearest_intruder_index[i]].speed for i in range(len(self.airplanes))])
-        self.min_dist = self.rho.min()
+        try:
+            #print(self.intruder.x, self.intruder.y)
+            num_airplanes = len(self.airplanes)
+            self.relative_distances = np.zeros((num_airplanes, num_airplanes))
+            self.relative_angles = np.zeros((num_airplanes, num_airplanes))  
+            self.relative_heads = np.zeros((num_airplanes, num_airplanes)) 
+            #self.relative_distances = np.array([[np.hypot(own.x-intruder.x, own.y-intruder.y) for intruder in self.airplanes] for own in self.airplanes])
+            for i, own in enumerate(self.airplanes):
+                for j, intruder in enumerate(self.airplanes):
+                    if i != j:
+                        self.relative_distances[i, j] = np.hypot(own.x - intruder.x, own.y - intruder.y)
+                    else:
+                        self.relative_distances[i, j] = np.inf 
+            #print('Relative distance shape:', self.relative_distances.shape)
+            #print('Relative distance :', self.relative_distances)
+            self.nearest_intruder_index = self.relative_distances.argmin(axis=-1)
+            #self.relative_angles = np.array([[rad_mod(np.arctan2(intruder.y-own.y, intruder.x-own.x)) for intruder in self.airplanes] for own in self.airplanes])
+            for i, own in enumerate(self.airplanes):
+                for j, intruder in enumerate(self.airplanes):
+                    if i != j:
+                        self.relative_angles[i, j] = rad_mod(np.arctan2(intruder.y-own.y, intruder.x-own.x))
+                    else:
+                        self.relative_distances[i, j] = 0
+            #self.relative_heads = np.array([[rad_mod(intruder.head-own.head) for intruder in self.airplanes] for own in self.airplanes])
+            for i, own in enumerate(self.airplanes):
+                for j, intruder in enumerate(self.airplanes):
+                    if i != j:
+                        self.relative_heads[i, j] = rad_mod(intruder.head-own.head)
+                    else:
+                        self.relative_heads[i, j] = 0
+            self.rho = np.array([self.relative_distances[i, self.nearest_intruder_index[i]] for i in range(len(self.airplanes))])
+            self.theta = np.array([self.relative_angles[i, self.nearest_intruder_index[i]] for i in range(len(self.airplanes))])
+            self.psi = np.array([self.relative_heads[i, self.nearest_intruder_index[i]] for i in range(len(self.airplanes))])
+            self.v_int = np.array([self.airplanes[self.nearest_intruder_index[i]].speed for i in range(len(self.airplanes))])
+            self.min_dist = self.rho.min()
+        except Exception as e:
+            print("Error during update_relations : ", str(e))
+            raise
 
     def _get_obs(self):
         own = self.airplanes[0]
         intruder = self.airplanes[1]
 
-        rho = np.clip(self.rho[0], -1e4, 1e4)
-        own_speed = np.clip(own.speed, 0, 300)
+        rho = np.clip(self.rho[0], -1e4, 1e4).item()
+        own_speed = np.clip(own.speed, 0, 300).item()
         intruder_speed = np.clip(intruder.speed, 0, 300)
         theta = np.clip(self.theta[0], -np.pi, np.pi)
         psi = np.clip(self.psi[0], -np.pi, np.pi)
-        last_a = np.clip(self.last_a, 0, 4)
+        last_a = np.clip(self.last_a, 0, 4).item()
 
         obs = np.array([rho, own_speed, intruder_speed, theta, psi, last_a], dtype=np.float32)
         return obs
@@ -216,7 +243,7 @@ class AcasEnv(gym.Env):
         own = self.airplanes[0]
         intruder = self.airplanes[1]
 
-        own.head = rad_mod(own.head + self.act_to_angle[action])
+        own.head = rad_mod(own.head + self.act_to_angle[int(action)])
         
         
         own.x += np.cos(own.head) * own.speed   
@@ -318,8 +345,12 @@ class AcasEnv(gym.Env):
         #pygame.draw.circle(self.screen, (255, 0, 0), intruder_pos, 10)
 
         pygame.display.flip()
+
+        image = pygame.surfarray.array3d(self.screen)
         self.screen.fill((255, 255, 255))
         self.clock.tick(self.metadata["render_fps"])
+
+        return image
 
     def close(self):
         if self.screen is not None:
