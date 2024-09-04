@@ -1,8 +1,9 @@
+from acas_xu import *
 from gymnasium.envs.registration import register
 
 register(
-    id='Acas-discrete-v1',
-    entry_point='acas-v2.acas_xu:AcasEnv',
+    id='AcasEnv',
+    entry_point='acas_v2.acas_xu:AcasEnv',
     
 )
 

@@ -14,7 +14,7 @@ import math
 
 from gym.utils import seeding
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimg  # Ajoutez cette ligne
+import matplotlib.image as mpimg  
 import random
 import os
 import time
@@ -88,7 +88,7 @@ class AcasEnv(gym.Env):
                  render_mode=None,
                  airplanes=None,  
                  epsilon=1853,
-                 max_time_steps=200, step=0):
+                 max_time_steps=200, step_ini=0):
         
         self.last_a = 0
         self.epsilon = epsilon
@@ -106,7 +106,7 @@ class AcasEnv(gym.Env):
         self.first_step = True
         self.done = False
         self.info = {}
-        self.current_time_step = 0
+        self.current_time_step = step_ini
 
         self.action_space = spaces.Discrete(5)
 
@@ -402,33 +402,35 @@ class Airplane():
 
 
 
+from gym import envs
 
 if __name__ == "__main__":
-
-    # Créer une instance de l'environnement
+    print(envs.registry.all())
+    # Create the environment
     env = AcasEnv(render_mode="human")
-    
-    # Réinitialiser l'environnement
+    #env = gym.make('AcasEnv')
+
+    # Reset the environment
     obs, info = env.reset()
     
-    # Définir le nombre maximal d'étapes
+    # Define number of steps
     num_steps = 200
     
-    # Boucle sur chaque étape du jeu
+
     for step in range(num_steps):
-        # Prendre l'action 0 (aller tout droit)
+        # Take action 0 : COC
         action = 1
         obs, reward, terminated, truncated, info = env.step(action)
     
-        # Rendre l'environnement pour visualiser
+        # Render the environment for vizalisation
         env.render()
     
-        # Vérifier si l'épisode est terminé ou tronqué
+        # Check if the environment is terminated or truncated
         if terminated or truncated:
             print(f"Episode terminé à l'étape {step + 1}")
             break
     
-    # Fermer l'environnement pour libérer les ressources
+    # Close the environment for ressources
     env.close()
 
 
