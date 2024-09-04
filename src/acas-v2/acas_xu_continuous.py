@@ -98,6 +98,7 @@ class AcasEnvContinuous(gym.Env):
         self.info = {}
         self.current_time_step = 0
 
+        #Poour les vols commerciaux, le changement de cap peut aller de 1 à 3 degrés par seconde. Nous supposons qu'un step est égal à 1 sec
         min_act_angle = np.radians(-3)
         max_act_angle = np.radians(+3)
         #self.action_space = spaces.Discrete(5)
@@ -256,23 +257,23 @@ class AcasEnvContinuous(gym.Env):
         
         reward = 0
             
-        if action == np.degrees(0):
+        if action == np.radians(0):
             #reward += 0.0001
             # reward += 0.0005
             reward += 1
 
         #strengthening action
         #elif ((self.last_a == ACT_WL and action == ACT_SL) or (self.last_a == ACT_WR and action == ACT_SR)):
-        elif ((np.degrees(-2)<self.last_a <np.degrees(0) and action<=np.degrees(-2)) or (np.degrees(0)<self.last_a<np.degrees(2) and action>=np.degrees(2))):
+        elif ((np.radians(-2)<self.last_a <np.radians(0) and action<=np.radians(-2)) or (np.radians(0)<self.last_a<np.radians(2) and action>=np.radians(2))):
             # reward -= 0.009
             reward -= 0.5
         
         #reversal 
-        elif ((np.degrees(-2)<self.last_a<np.degrees(0) or self.last_a<=np.degrees(-2)) and (np.degrees(0)<action<np.degrees(2) or action>=np.degrees(2))):
+        elif ((np.radians(-2)<self.last_a<np.radians(0) or self.last_a<=np.radians(-2)) and (np.radians(0)<action<np.radians(2) or action>=np.radians(2))):
             reward -= 1
         
         #reversal 
-        elif ((np.degrees(0)<self.last_a<np.degrees(2) or self.last_a>=np.degrees(2)) and (np.degrees(-2)<action<np.degrees(0) or action<=np.degrees(-2))):
+        elif ((np.radians(0)<self.last_a<np.radians(2) or self.last_a>=np.radians(2)) and (np.radians(-2)<action<np.radians(0) or action<=np.radians(-2))):
             reward -= 1
 
         #crash 
