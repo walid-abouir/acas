@@ -45,7 +45,7 @@ indicates if it's close to a collision with the intruder.
 - The second and third values of the observation are the ownship's and intruder's 
 speed. It goes from 0 and 300 m/sec.
 - The fourth value is theta, which is the relative angle between the two airplanes.
-Its value goes form - \pi and $\pi$
+Its value goes form - \pi and &pi;
 
 
 ## Action space
