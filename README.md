@@ -26,7 +26,7 @@ cd acas-v2
 pip install -e .
 ```
 
-### Environneent prerequisites
+### Environment prerequisites
 
 Environment to run needs Python3 with Gym, Pygame, Numpy, and StableBaselines3 libraries.
 
@@ -77,7 +77,12 @@ and value 3 degrees means turning strongly  to the right.
 
 At the start of each episode, initial positions and velocities for two airplanes
 are set up. It first defines a fixed time of interest, when the collision will 
-happen.
-
+happen. It affects random values for the headings and the velocities.
+The position of the collision was taken experimentally so that it could be seen
+on the screen during the simulation.
 
 ## Ending episode conditions
+
+Each episode ends if the minimum distance between the two airplanes, rho, is less
+than a initially defined value, called epsilon. Additionally, each episode is 
+limited in duration by the maximum number of timesteps.
