@@ -10,7 +10,7 @@ learning tasks. It includes methods for resetting the environment, taking a
 step in the environment, rendering the current state, and closing the environment.
 
 <p align="center">
-  <img src="2aiplanes.png"/>
+  <img src=media/simulation.gif width="75%"/>
 </p>
 
 ## Installation and prerequisites
@@ -50,14 +50,28 @@ Its value goes form - &pi; and &pi;
 Its value goes form - &pi; and &pi;
 - The sixth value is the last action taken by the agent, called "last_a". 
 In the discrete version of the environment, it is an integer between 0 and 4.
-In the continuous version of the environment, it's a float number, which is what
-it's added to ownship's head, to modify it, and avoid the collision.
+In the continuous version of the environment, it's a float number, which is
+added to ownship's head, to modify it, and avoid the collision.
 
 ## Action space
 
 ### Discrete version of the environment
 
+The space of actions in the discrete version of the environment of one integer value
+from 0 to 4. It is correlated to the angle added to the ownship's head to modify
+its head :
+- 0 &rarr; Clear Of Conflict (COC) : Maintain current heading
+- 1 &rarr; Weak Left (WL) : Turn left (small angle)
+- 2 &rarr; Weak Right (WR) : Turn right (small angle)
+- 3 &rarr; Strong Left (SL) : Turn left (large angle)
+- 4 &rarr; Strong Right (SR) : Turn right (large angle)
+
 ### Continuous version of the environment
+
+The space of actions made available to the RL agent consists of one value from -3
+to 3 degrees. It is correlated to the angle added to the ownship's head to modify
+its head. The value -3 degrees means that the airplane turns strongly to the left,
+and value 3 degrees means turning strongly  to the right.
 
 ## Initial episode conditions
 
