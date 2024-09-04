@@ -34,7 +34,7 @@ Environment to run needs Python3 with Gym, Pygame, Numpy, and StableBaselines3 l
 pip install stable-baselines3 numpy gymnasium gym pygame
 ```
 
-# Environment details
+## Environment details
 
 ## Observation space
 
@@ -86,3 +86,16 @@ on the screen during the simulation.
 Each episode ends if the minimum distance between the two airplanes, rho, is less
 than a initially defined value, called epsilon. Additionally, each episode is 
 limited in duration by the maximum number of timesteps.
+
+## Reward Structure:
+
+- A positive reward is given for maintaining the current heading.
+- Small Penalties are applied for conflicting maneuvers (Strengthening or reversing
+from left to right).
+- A large negative reward is given if the distance to the intruder drops below a
+safety threshold (epsilon).
+
+## Environment parameters
+
+This environment provides several parameters that can change the way it works.
+
