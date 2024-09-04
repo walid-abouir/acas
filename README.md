@@ -57,7 +57,14 @@ it's added to ownship's head, to modify it, and avoid the collision.
 
 ### Discrete version of the environment
 
-
+The space of actions in the discrete version of the environment of one integer value
+from 0 to 4. It is correlated to the angle added to the ownship's head to modify
+its head :
+- 0 &rarr; Clear Of Conflict (COC) : Maintain current heading
+- 1 &rarr; Weak Left (WL) : Turn left (small angle)
+- 2 &rarr; Weak Right (WR) : Turn right (small angle)
+- 3 &rarr; Strong Left (SL) : Turn left (large angle)
+- 4 &rarr; Strong Right (SR) : Turn right (large angle)
 
 ### Continuous version of the environment
 
