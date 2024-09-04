@@ -98,4 +98,9 @@ safety threshold (epsilon).
 ## Environment parameters
 
 This environment provides several parameters that can change the way it works.
+- render_mode : (string) The mode of the render (human or rgb_array)
+- airplanes (class) : list of airplanes and their parameters : position (x , y), speed (float), head (float), name (string).
+- epsilon : (int) The safety threshold before collision.
+- max_time_steps : (int) The maximum time steps during an episode.
+- step_ini : (int) Initial step at the begining of the episode (Default = 0).
 
