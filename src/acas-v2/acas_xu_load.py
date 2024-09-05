@@ -16,17 +16,20 @@ from stable_baselines3.common.evaluation import evaluate_policy
 
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 from acas_xu import AcasEnv
+from acas_xu_continuous import AcasEnvContinuous
 import gymnasium as gym
 
 
-
+env = AcasEnvContinuous(render_mode="human")
 
 #models_dir= "models/PPO-1724842675"
 
 #model_path = f"{models_dir}/100000.zip"
 
 
-model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/logs/PPO_1/src_acas-v2_models_rl_model_16000_steps", env)
+#model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/logs/PPO_1/src_acas-v2_models_rl_model_16000_steps", env)
+
+model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/models/PPO-1725524210/3000000.zip", env)
 
 mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=1)
 vec_env = model.get_env()
