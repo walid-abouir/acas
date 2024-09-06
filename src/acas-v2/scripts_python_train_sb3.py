@@ -12,16 +12,16 @@ import gymnasium as gym
 import PyFlyt.gym_envs
 from PyFlyt.gym_envs import FlattenWaypointEnv
 
-import phd.env
-from phd.logger import callback_custom_metric_sb3
+from acas_xu import AcasEnv
+from logger import callback_custom_metric_sb3
 
 
-root_path_logs = "/stck/troux/phd/runs/" if "spiro" in socket.gethostname() else "/home/troux/phd/runs/"
+root_path_logs = "/stck/wabouir/acas-xu" if "spiro" in socket.gethostname() else "/d/wabouir/acas-v2/src/"
 
 # Argument parser
 parser = argparse.ArgumentParser(description='RL algorithm parameters')
 parser.add_argument('--algorithm', type=str, choices=['PPO', 'SAC', 'A2C', 'TD3', 'DDPG', 'DQN'], default='PPO', help='RL algorithm to use')
-parser.add_argument('--gym_id', type=str, default="PyFlyt/QuadX-Hover-v2", help='Environment ID')
+parser.add_argument('--gym_id', type=str, default="acas-v2", help='Environment ID')
 parser.add_argument("--num_envs", type=int, default=1, help="Number of environments to use in parallel")
 parser.add_argument('--verbose', type=int, default=0, help='Verbose level')
 parser.add_argument('--seed', type=int, default=None, help='Random seed')
@@ -41,9 +41,10 @@ np.random.seed(args.seed)
 torch.manual_seed(args.seed)
 
 def make_env():
-    env = gym.make(args.gym_id, reward_crash=args.reward_crash)
-    if args.gym_id in ["PyFlyt/QuadX-Waypoints-v2", "PyFlyt/QuadX-Pole-Waypoints-v2"]:
-        env = FlattenWaypointEnv(env, context_length=2)
+    env=AcasEnv()
+    #env = gym.make(args.gym_id, reward_crash=args.reward_crash)
+    #if args.gym_id in ["PyFlyt/QuadX-Waypoints-v2", "PyFlyt/QuadX-Pole-Waypoints-v2"]:
+        #env = FlattenWaypointEnv(env, context_length=2)
     return env
 
 # Environment
