@@ -16,6 +16,7 @@ import sys
 from stable_baselines3.common.evaluation import evaluate_policy
 
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
+from acas_xu_speeds import AcasEnvSpeeds
 from acas_xu import AcasEnv
 from acas_xu_continuous import AcasEnvContinuous
 import gymnasium as gym
