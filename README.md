@@ -46,7 +46,7 @@ indicates if it's close to a collision with the intruder.
 speed. It goes from 0 and 300 m/sec.
 - The fourth value is theta, which is the relative angle between the two airplanes.
 Its value goes form - &pi; and &pi;
-- The fifth value is theta, which is the relative heads between the two airplanes.
+- The fifth value is psi, which is the relative heads between the two airplanes.
 Its value goes form - &pi; and &pi;
 - The sixth value is the last action taken by the agent, called "last_a". 
 In the discrete version of the environment, it is an integer between 0 and 4.
