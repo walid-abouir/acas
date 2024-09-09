@@ -195,25 +195,25 @@ class AcasEnv(gym.Env):
     def smart_random_init(self, total_time=200):
         airplanes = []
         
-        interest_time = random.randrange(80, total_time - 40)
-        #interest_time = 100
+        #interest_time = random.randrange(80, total_time - 40)
+        interest_time = 100
 
-        head = np.random.uniform(-np.pi, np.pi)
-        #head = 1.0
+        #head = np.random.uniform(-np.pi, np.pi)
+        head = 1.0
         
-        speed = np.random.uniform(50, 100)
-        #speed = 75
+        #speed = np.random.uniform(50, 100)
+        speed = 75
         
         x_t, y_t = 0, 0
         x_0 = x_t - (speed * interest_time * np.cos(head))
         y_0 = y_t - (speed * interest_time * np.sin(head))
         airplanes.append(Airplane(x=x_0, y=y_0, head=head, speed=speed, name="own"))
 
-        head = np.random.uniform(-np.pi, np.pi)
-        #head = 2.0
+        #head = np.random.uniform(-np.pi, np.pi)
+        head = 2.0
         
-        speed = np.random.uniform(100, 300)
-        #speed = 200
+        #speed = np.random.uniform(100, 300)
+        speed = 200
         
         x_t, y_t = 0, 0
         x_0 = x_t - (speed * interest_time * np.cos(head))

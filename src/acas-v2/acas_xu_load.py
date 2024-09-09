@@ -1,4 +1,5 @@
 import gymnasium
+import argparse
 import numpy as np
 from PIL import Image
 import stable_baselines3 as sb3
@@ -19,8 +20,14 @@ from acas_xu import AcasEnv
 from acas_xu_continuous import AcasEnvContinuous
 import gymnasium as gym
 
+parser= argparse.ArgumentParser(description='RL algorithm parameters')
 
-env = AcasEnvContinuous(render_mode="human")
+parser.add_argument('--model', type=str, default='/models/PPO-1725524210/3000000.zip', help = "Model's name")
+
+args = parser.parse_args()
+
+
+env = AcasEnv(render_mode="human")
 
 #models_dir= "models/PPO-1724842675"
 
@@ -29,7 +36,9 @@ env = AcasEnvContinuous(render_mode="human")
 
 #model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/logs/PPO_1/src_acas-v2_models_rl_model_16000_steps", env)
 
-model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/models/PPO-1725524210/3000000.zip", env)
+#model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/models/PPO-1725524210/3000000.zip", env)
+
+model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ args.model, env)
 
 mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=1)
 vec_env = model.get_env()
