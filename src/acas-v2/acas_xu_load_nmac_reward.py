@@ -17,12 +17,14 @@ import matplotlib.pyplot as plt
 
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 from acas_xu_speeds import AcasEnvSpeeds
+from acas_xu_heads import AcasEnvHeads
 from acas_xu_speed_own import AcasEnv
 from acas_xu_continuous import AcasEnvContinuous
 import gymnasium as gym
 
 
-env = AcasEnvSpeeds(render_mode="human")
+# env = AcasEnvSpeeds(render_mode="human")
+env = AcasEnvHeads(render_mode="human")
 
 #models_dir= "models/PPO-1724842675"
 
@@ -46,6 +48,9 @@ model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/logs/PPO-17255468
 
 # Interest time randomized
 #model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/models/PPO-1725546779/3000000.zip", env)
+
+# Two heads randomized 
+model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/logs/PPO-heads/fixed_agent_model_1700000_steps.zip", env)
 
 
 
