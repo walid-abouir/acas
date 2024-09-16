@@ -87,7 +87,7 @@ class AcasEnv(gym.Env):
                  save_states=False,
                  render_mode=None,
                  airplanes=None,  
-                 epsilon=1853,
+                 epsilon=500,
                  max_time_steps=200, step_ini=0):
         
         self.last_a = 0
@@ -201,8 +201,8 @@ class AcasEnv(gym.Env):
         #head = np.random.uniform(-np.pi, np.pi)
         head = 1.0
         
-        #speed = np.random.uniform(50, 100)
-        speed = 75
+        speed = np.random.uniform(50, 100)
+        #speed = 75
         
         x_t, y_t = 0, 0
         x_0 = x_t - (speed * interest_time * np.cos(head))
