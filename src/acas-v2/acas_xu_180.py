@@ -199,7 +199,7 @@ class AcasEnv(gym.Env):
         interest_time = 100
 
         #head = np.random.uniform(-np.pi, np.pi)
-        head = np.pi/2
+        head = np.pi
         
         speed = np.random.uniform(50, 100)
         #speed = 75
@@ -214,7 +214,7 @@ class AcasEnv(gym.Env):
         head = 0
 
         speed = np.random.uniform(100, 300)
-        #speed = 200
+        #speed = 100
         
         x_t, y_t = 0, 0
         x_0 = x_t - (speed * interest_time * np.cos(head))

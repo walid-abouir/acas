@@ -199,7 +199,7 @@ class AcasEnv(gym.Env):
         interest_time = 100
 
         #head = np.random.uniform(-np.pi, np.pi)
-        head = np.pi/2
+        head = np.pi/4
         
         speed = np.random.uniform(50, 100)
         #speed = 75
@@ -314,7 +314,7 @@ class AcasEnv(gym.Env):
             self.clock = pygame.time.Clock()
             airplane_image_path = os.path.dirname(os.path.realpath(__file__)) + '/img/airplane.png'
             self.airplane_image = pygame.image.load(airplane_image_path).convert_alpha()
-            self.airplane_image = pygame.transform.scale(self.airplane_image, (20,20))
+            self.airplane_image = pygame.transform.scale(self.airplane_image, (15,15))
 
         if self.first_step:  # Cleaning the screen after each episode
             self.screen.fill((255, 255, 255))  # Put a white screen
