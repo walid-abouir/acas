@@ -18,45 +18,31 @@ import matplotlib.pyplot as plt
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 from acas_xu_speeds import AcasEnvSpeeds
 from acas_xu_heads import AcasEnvHeads
+
+"""Environment with the 90 degrees init"""
 from acas_xu import AcasEnv
+"""Environment with the 45 degrees init"""
+#from acas_xu_45 import AcasEnv
+"""Environment with the 180 degrees init"""
+#from acas_xu_180 import AcasEnv
 from acas_xu_continuous import AcasEnvContinuous
 import gymnasium as gym
 
 
-# env = AcasEnvSpeeds(render_mode="human")
+
 env = AcasEnv(render_mode="human")
 
-#models_dir= "models/PPO-1724842675"
-
-#model_path = f"{models_dir}/100000.zip"
 
 
-#model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/logs/PPO_1/src_acas-v2_models_rl_model_16000_steps", env)
+#model for a 90 degrees initialization
+model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/models/90_deg_agent/fixed_agent_model_2900000_steps.zip", env)
 
-#Head intruder randomized
-#model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/logs/PPO-1725548382/fixed_agent_model_3000000_steps.zip", env)
+#model for a 45 degrees initialization
+#model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/models/45_deg_agent/fixed_agent_model_3430000_steps.zip", env)
 
-# Speed ownship randomized
-#model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/models/PPO-1725546805/3000000.zip", env)
-#model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/logs/PPO-1725546805/fixed_agent_model_1500000_steps.zip", env)
+#model for a 180 degrees initialization
+#model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/models/180_deg_agent/fixed_agent_model_2900000_steps.zip", env)
 
-# Speed Intruder randomized
-#model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/models/PPO-1725546793/3000000.zip", env)
-
-# Head ownship randomized
-#model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/models/PPO-1725546779/3000000.zip", env)
-
-# Interest time randomized
-#model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/models/PPO-1725546779/3000000.zip", env)
-
-# Two heads randomized 
-#model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/logs/PPO-heads/fixed_agent_model_1700000_steps.zip", env)
-
-"""SPEEDS angle 45"""
-# model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/logs/PPO-speeds-45-entropy/fixed_agent_model_3990000_steps.zip", env)
-
-"""SPEEDS angle 180"""
-model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/logs/PPO-speeds-90-entropy-1726758063/fixed_agent_model_2900000_steps.zip", env)
 
 
 mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=1)
