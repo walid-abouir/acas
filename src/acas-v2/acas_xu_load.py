@@ -17,7 +17,7 @@ from stable_baselines3.common.evaluation import evaluate_policy
 
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 from acas_xu_speeds import AcasEnvSpeeds
-from acas_xu_45 import AcasEnv
+from acas_xu import AcasEnv
 from acas_xu_continuous import AcasEnvContinuous
 import gymnasium as gym
 
@@ -38,7 +38,7 @@ env = AcasEnv(render_mode="human")
 # Speed ownship randomized
 #model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/logs/PPO-1725546805/fixed_agent_model_1500000_steps.zip", env)
 
-model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/logs/PPO-speeds-45/fixed_agent_model_2640000_steps.zip", env)
+model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/logs/PPO-speeds-90-entropy-1726758063/fixed_agent_model_2900000_steps.zip", env)
 
 
 #model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/logs/PPO_1/src_acas-v2_models_rl_model_16000_steps", env)

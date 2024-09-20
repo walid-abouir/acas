@@ -266,24 +266,25 @@ class AcasEnv(gym.Env):
         if action == ACT_COC:
             #reward += 0.0001
             # reward += 0.0005
-            reward += 1
+            reward += 0.0001
 
         #strengthening action
         elif ((self.last_a == ACT_WL and action == ACT_SL) or (self.last_a == ACT_WR and action == ACT_SR)):
-            # reward -= 0.009
-            reward -= 0.5
+            reward -= 0.009
+            #reward -= 0.5
         
         #reversal 
         elif ((self.last_a == ACT_WL or self.last_a == ACT_SL) and (action == ACT_WR or action == ACT_SR)):
-            reward -= 1
+            reward -= 0.1
         
         #reversal 
         elif ((self.last_a == ACT_WR or self.last_a == ACT_SR) and (action == ACT_WL or action == ACT_SL)):
-            reward -= 1
+            reward -= 0.1
 
         #crash 
         if self.rho[-1] < self.epsilon:
-            reward = -100
+            reward = -1.0
+
 
         #print(reward)
         #print(action)
@@ -314,7 +315,7 @@ class AcasEnv(gym.Env):
             self.clock = pygame.time.Clock()
             airplane_image_path = os.path.dirname(os.path.realpath(__file__)) + '/img/airplane.png'
             self.airplane_image = pygame.image.load(airplane_image_path).convert_alpha()
-            self.airplane_image = pygame.transform.scale(self.airplane_image, (15,15))
+            self.airplane_image = pygame.transform.scale(self.airplane_image, (20,20))
 
         if self.first_step:  # Cleaning the screen after each episode
             self.screen.fill((255, 255, 255))  # Put a white screen

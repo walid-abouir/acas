@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 from acas_xu_speeds import AcasEnvSpeeds
 from acas_xu_heads import AcasEnvHeads
-from acas_xu_45 import AcasEnv
+from acas_xu import AcasEnv
 from acas_xu_continuous import AcasEnvContinuous
 import gymnasium as gym
 
@@ -53,8 +53,10 @@ env = AcasEnv(render_mode="human")
 #model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/logs/PPO-heads/fixed_agent_model_1700000_steps.zip", env)
 
 """SPEEDS angle 45"""
-model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/logs/PPO-speeds-45/fixed_agent_model_2640000_steps.zip", env)
+# model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/logs/PPO-speeds-45-entropy/fixed_agent_model_3990000_steps.zip", env)
 
+"""SPEEDS angle 180"""
+model= PPO.load(os.path.dirname(os.path.realpath(__file__))+ "/logs/PPO-speeds-90-entropy-1726758063/fixed_agent_model_2900000_steps.zip", env)
 
 
 mean_reward, std_reward = evaluate_policy(model, model.get_env(), n_eval_episodes=1)
@@ -113,14 +115,25 @@ plt.ylabel('Reward moyenne')
 plt.grid(True)
 plt.show()
 
+mean_reward_dubins=-0.05
 reward_mean = sum(mean_rewards)/len(mean_rewards)
 reward_max = max(mean_rewards)
-reward_agent_coc= -200
+reward_agent_coc= -1.0
 
 plt.figure(figsize=(6, 4))
-plt.bar(['PPO', 'max PPO', 'COC agent'], [reward_mean, reward_max, reward_agent_coc], color='skyblue', width=0.5)
-plt.title('Moyenne des rewards pour l\'agent PPO')
-plt.ylabel('Reward moyenne')
+plt.bar(['PPO', 'max PPO', 'COC agent', 'Dubins'], [reward_mean, reward_max, reward_agent_coc, mean_reward_dubins], color='skyblue', width=0.5)
+plt.title('Moyenne des rewards pour plusieurs agents')
+plt.grid(True, axis='y')
+plt.xticks(rotation=45) 
+plt.show()
+
+nmacs_moy_dubins= 13
+nmacs_moy_coc= 100
+
+plt.figure(figsize=(6, 4))
+plt.bar(['PPO', 'Dubins', 'COC agent'], [nmacs[-1], nmacs_moy_dubins, nmacs_moy_coc], color='skyblue', width=0.5)
+plt.title('Pourcentage des NMACs')
+plt.ylabel('NMACs (%)')
 plt.grid(True, axis='y')
 plt.xticks(rotation=45) 
 plt.show()
