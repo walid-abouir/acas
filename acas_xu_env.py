@@ -6,8 +6,8 @@ import numpy as np
 from typing import Optional, Union
 import math
 
-from gym import spaces
-from gym.utils import seeding
+#from gym import spaces
+from gymnasium.utils import seeding
 import matplotlib as plt
 import random
 import os
@@ -277,6 +277,8 @@ class AcasEnv(gym.Env):
         self.current_time_step += 1
         #condition_reversal = (self.commands_history[-2]==1 and self.commands_history[-1]==2) or (self.commands_history[-2]==1 and self.commands_history[-1]==4) or (self.commands_history[-2]==1 and self.commands_history[-1]==2)
 
+        reward = 0.0 
+        
         if (self.commands_history[-1]==0):
             reward +=0.0001
         elif ((self.commands_history[-2]==1 and self.commands_history[-1]==3)or (self.commands_history[-2]==2 and self.commands_history[-1]==4)):
