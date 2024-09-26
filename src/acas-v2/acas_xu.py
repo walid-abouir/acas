@@ -1,26 +1,25 @@
-import gymnasium as gym
 import numpy as np
-import pygame
-from gymnasium import spaces
-import random
-import pygame.font
+
 import gymnasium as gym
 from gymnasium import spaces
 from gymnasium.envs.registration import register
-from gymnasium.utils.env_checker import check_env
-import numpy as np
-from typing import Optional, Union
-import math
+#from gymnasium.utils.env_checker import check_env
+#from gym.utils import seeding
 
-from gym.utils import seeding
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg  
+import pygame
+import pygame.font
+
 import random
-import os
-import time
+#from typing import Optional, Union
+#import math
 
-from matplotlib import patches, animation
-from matplotlib.transforms import Affine2D
+import os
+#import time
+
+#import matplotlib.pyplot as plt
+#import matplotlib.image as mpimg  
+#from matplotlib import patches, animation
+#from matplotlib.transforms import Affine2D
 
 LENGTH =1200
 WIDTH = 800
@@ -317,9 +316,9 @@ class AcasEnv(gym.Env):
             self.airplane_image = pygame.image.load(airplane_image_path).convert_alpha()
             self.airplane_image = pygame.transform.scale(self.airplane_image, (20,20))
 
-        if self.first_step:  # Cleaning the screen after each episode
-            self.screen.fill((255, 255, 255))  # Put a white screen
-            self.first_step = False
+        #if self.first_step:  # Cleaning the screen after each episode
+         #   self.screen.fill((255, 255, 255))  # Put a white screen
+         #   self.first_step = False
 
         own = self.airplanes[0]
         intruder = self.airplanes[1]
@@ -342,7 +341,6 @@ class AcasEnv(gym.Env):
         self.draw_time()
         #self.draw_dashed_line(self.screen, (0, 0, 0), intruder_pos, (LENGTH/2,WIDTH/2), dash_length=15, width=2)
 
-        
         #pygame.draw.circle(self.screen, (0, 0, 255), own_pos, 10)
         #pygame.draw.circle(self.screen, (255, 0, 0), intruder_pos, 10)
 
@@ -404,10 +402,17 @@ class Airplane():
 
 
 
-from gym import envs
 
 if __name__ == "__main__":
-    print(envs.registry.all())
+
+
+    from gym import envs
+    from numpy import random
+
+    rndgen = random.default_rng()
+    
+    #print(envs.registry.all())
+
     # Create the environment
     env = AcasEnv(render_mode="human")
     #env = gym.make('AcasEnv')
@@ -421,7 +426,7 @@ if __name__ == "__main__":
 
     for step in range(num_steps):
         # Take action 0 : COC
-        action = 0
+        action = rndgen.choice([0,1,2,3,4])
         obs, reward, terminated, truncated, info = env.step(action)
     
         # Render the environment for vizalisation

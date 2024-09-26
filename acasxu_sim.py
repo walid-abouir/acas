@@ -28,18 +28,18 @@ from matplotlib.lines import Line2D
 #mpl.use('QT5Agg')
 
 
-if __name__ == '__main__' :
-    from aidge_nn import AidgeNN
-    from dubins_nn import DubinsNN
-    from lut_model import NearestLUT
-    from lut_model import Encounter
-    from lut_constants import get_act_idx, ACTION_NAMES, ACTION_CODES, ACT_IDX_COC
-else:
-    from acas import AidgeNN
-    from acas import DubinsNN
-    from acas import NearestLUT
-    from acas.lut_model import Encounter
-    from acas.lut_constants import get_act_idx, ACTION_NAMES, ACTION_CODES, ACT_IDX_COC
+#if __name__ == '__main__' :
+#    from aidge_nn import AidgeNN
+#    from dubins_nn import DubinsNN
+#    from lut_model import NearestLUT
+#    from lut_model import Encounter
+#    from lut_constants import get_act_idx, ACTION_NAMES, ACTION_CODES, ACT_IDX_COC
+#else:
+#from acas import AidgeNN
+from acas import DubinsNN
+from acas import NearestLUT
+from acas.lut_model import Encounter
+from acas.lut_constants import get_act_idx, ACTION_NAMES, ACTION_CODES, ACT_IDX_COC
 
 
 # 0: rho, distance (m) [0, 60760]
@@ -706,7 +706,7 @@ class AcasRender():
        if not isinstance(self.envs, list): 
            self.envs = [self.envs]
            
-       airplane_img_filepath = os.path.dirname(os.path.realpath(__file__)) + '/img/airplane.png'
+       airplane_img_filepath = os.path.dirname(os.path.realpath(__file__)) + '/src/acas-v2/img/airplane.png'
        self.img = plt.imread(airplane_img_filepath)
 
        self.anim = None
